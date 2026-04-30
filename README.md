@@ -2,6 +2,34 @@
 
 This repository provides a templates of `tmux`-based AI workbench inside the devcontainer.
 
+
+## Run Devcontainer CLI in Container
+
+```shell
+docker build -t devcontainer-cli .
+```
+Add shell is shell dot file.
+
+```shell
+alias devcontainer-stop='docker stop $(docker ps -q -f label=devcontainer.local_folder="$PWD")'
+alias devcontainer-remove='docker rm $(docker ps -a -q -f label=devcontainer.local_folder="$PWD")'
+
+devcontainer() {
+  docker run --rm -it \
+    -v "$HOME":"$HOME":ro \
+    -v "$HOME/.docker/buildx" \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -w "$PWD" \
+    -e HOME="$HOME" \
+    -e GEMINI_API_KEY="$GEMINI_API_KEY" \
+    -e AWS_BEARER_TOKEN_BEDROCK="$AWS_BEARER_TOKEN_BEDROCK" \
+    -e AZURE_OPENAI_API_KEY="$AZURE_OPENAI_API_KEY" \
+    -e AZURE_COGNITIVE_SERVICES_RESOURCE_NAME="$AZURE_COGNITIVE_SERVICES_RESOURCE_NAME" \
+    devcontainer-cli "$@"
+}
+```
+
+
 ## Rebuild the devcontainer
 
 After pulling the latest `.devcontainer` changes, rebuild the container in VS Code.

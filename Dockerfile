@@ -7,5 +7,9 @@ RUN apk update && \
 # 全域安裝 Dev Container CLI
 RUN npm install -g @devcontainers/cli
 
+# 複製並設定 entrypoint 腳本
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # 設定進入點
-ENTRYPOINT ["devcontainer"]
+ENTRYPOINT ["/entrypoint.sh"]
