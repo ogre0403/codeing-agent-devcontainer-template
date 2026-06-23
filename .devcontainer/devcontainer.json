@@ -13,6 +13,8 @@
 			"extensions": [
 				"isudox.vscode-jetbrains-keybindings",
 				"arifum.bedrock-vscode-chat",
+				"openai.chatgpt",
+				"sst-dev.opencode",
 			],
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "zsh",
