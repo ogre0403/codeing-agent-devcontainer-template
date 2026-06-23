@@ -12,7 +12,7 @@
 		"vscode": {
 			"extensions": [
 				"isudox.vscode-jetbrains-keybindings",
-				"vtkn.amazon-bedrock-copilot-chat",
+				"arifum.bedrock-vscode-chat",
 			],
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "zsh",
@@ -35,8 +35,8 @@
 		// Install Coding Agent, Claude Code, OpenCode, Codex, and Gemini
 		"ghcr.io/anthropics/devcontainer-features/claude-code:1": {},
 		"ghcr.io/stu-bell/devcontainer-features/open-code:0": {},
-		"ghcr.io/cirolosapio/devcontainers-features/alpine-node:0": {
-			"globalPackages": "@fission-ai/openspec@latest @openai/codex @google/gemini-cli"
+		"ghcr.io/cirolosapio/devcontainers-features/alpine-node:0.0.16": {
+			"globalPackages": "@fission-ai/openspec@latest @openai/codex"
 		},
 		// Access host Docker inside Devcontainer
 		// "ghcr.io/cirolosapio/devcontainers-features/alpine-docker-outside-of-docker:0": {},
@@ -52,13 +52,11 @@
 		"CLAUDE_CODE_MAX_OUTPUT_TOKENS": "64000",
 		"AWS_BEARER_TOKEN_BEDROCK": "${localEnv:AWS_BEARER_TOKEN_BEDROCK}",
 		"AZURE_COGNITIVE_SERVICES_RESOURCE_NAME": "${localEnv:AZURE_COGNITIVE_SERVICES_RESOURCE_NAME}",	
-		"GEMINI_API_KEY": "${localEnv:GEMINI_API_KEY}",
 		"AZURE_OPENAI_API_KEY": "${localEnv:AZURE_OPENAI_API_KEY}",
 	},
 	"mounts": [
 		"source=opencode_setting,target=/root/.local,type=volume",
 		"source=claude_setting,target=/root/.claude_setting,type=volume",
-		"source=gemini_setting,target=/root/.gemini,type=volume",
 		"source=codex_setting,target=/root/.codex,type=volume",		
 	],
 	"initializeCommand": "sh .devcontainer/initializeCommand.sh",
