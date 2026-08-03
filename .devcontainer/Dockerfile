@@ -1,4 +1,4 @@
-FROM alpine:3.23
+FROM node:26-alpine
 
 RUN  sed -i 's|https://dl-cdn.alpinelinux.org/alpine|https://alpine.cs.nycu.edu.tw|g' /etc/apk/repositories 
 
