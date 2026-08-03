@@ -18,3 +18,9 @@ ln -sfn  /root/.agents/skills               /root/.claude/skills
 ln -sfn  "$WORKSPACE_FOLDER/.devcontainer/tmux.conf" /root/.tmux.conf
 git config --global color.ui auto
 git config --global core.pager 'less -FRX'
+
+# https://github.com/rtk-ai/rtk
+$HOME/.local/bin/rtk init -g --codex
+$HOME/.local/bin/rtk init -g --copilot
+$HOME/.local/bin/rtk init -g --opencode
+$HOME/.local/bin/rtk init -g
