@@ -17,6 +17,7 @@ alias devcontainer-remove='docker rm $(docker ps -a -q -f label=devcontainer.loc
 devcontainer() {
   docker run --rm -it \
     -v "$HOME":"$HOME":ro \
+    -v "$PWD":"$PWD":rw \
     -v "$HOME/.docker/buildx" \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -w "$PWD" \
