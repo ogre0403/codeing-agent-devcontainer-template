@@ -18,6 +18,8 @@ ln -sfn  /root/.agents/skills               /root/.claude/skills
 ln -sfn  "$WORKSPACE_FOLDER/.devcontainer/tmux.conf" /root/.tmux.conf
 git config --global color.ui auto
 git config --global core.pager 'less -FRX'
+git config --global alias.st status
+git config --global alias.br branch
 
 # https://github.com/rtk-ai/rtk
 $HOME/.local/bin/rtk init -g --codex

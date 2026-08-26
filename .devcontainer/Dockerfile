@@ -1,9 +1,8 @@
-FROM node:26-alpine
+FROM alpine:3.24.1
 
 RUN  sed -i 's|https://dl-cdn.alpinelinux.org/alpine|https://alpine.cs.nycu.edu.tw|g' /etc/apk/repositories 
 
-RUN apk add --no-cache zsh-vcs tmux less && \
-    sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.1/zsh-in-docker.sh)" -- \
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.1/zsh-in-docker.sh)" -- \
     -t agnoster \
     -p git \
     -p z \
@@ -31,17 +30,4 @@ RUN sed -i '/## Main/i prompt_newline() { \n\
  CURRENT_BG=''\n\
 }' /root/.oh-my-zsh/themes/agnoster.zsh-theme && \
     sed -i 's/  prompt_hg/  prompt_hg\n  prompt_newline/' /root/.oh-my-zsh/themes/agnoster.zsh-theme
-
-ARG INSTALL_PYTHON
-RUN if [ "${INSTALL_PYTHON}" == "true" ]; then \
-        apk add --no-cache python3 py3-pip ;\
-        # install uv from offical script (alpine 3.20 does not have uv package)
-        # TODO: uv will use /root/.local/bin/env, which conflict volume required by OpenCode
-        # curl -LsSf https://astral.sh/uv/install.sh | sh ;\
-    fi
-
-
-
-
-
 

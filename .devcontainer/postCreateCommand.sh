@@ -1,7 +1,6 @@
 #!/bin/sh
 
 mkdir -p ~/.agents/skills
-# git clone https://github.com/Zillaforge/skills ~/.agents/skills
 
 if command -v openspec > /dev/null 2>&1; then
   # Configure openspec with all 11 workflows (skills delivery only)
@@ -24,6 +23,12 @@ EOF
   cp -r "$_tmpdir/.opencode/skills/." ~/.agents/skills/
   rm -rf "$_tmpdir"
 fi
+
+  # Install Zillaforge Skill
+  tmp=$(mktemp -d)
+  git clone https://github.com/Zillaforge/skills.git "$tmp/skills"
+  cp -a -- "$tmp"/skills/zillaforge-* ~/.agents/skills/
+  rm -rf "$tmp"
 
 # https://github.com/rtk-ai/rtk
 curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sed 's/aarch64-unknown-linux-gnu/x86_64-unknown-linux-musl/g' | sh
