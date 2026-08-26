@@ -9,27 +9,8 @@ This repository provides a templates of `tmux`-based AI workbench inside the dev
 cd devcontainer
 docker build -t devcontainer-cli .
 ```
-Add shell is shell dot file.
-
-```shell
-alias devcontainer-stop='docker stop $(docker ps -q -f label=devcontainer.local_folder="$PWD")'
-alias devcontainer-remove='docker rm $(docker ps -a -q -f label=devcontainer.local_folder="$PWD")'
-
-devcontainer() {
-  docker run --rm -it \
-    -v "$HOME":"$HOME":ro \
-    -v "$PWD":"$PWD":rw \
-    -v "$HOME/.docker/buildx" \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -w "$PWD" \
-    -e HOME="$HOME" \
-    -e GEMINI_API_KEY="$GEMINI_API_KEY" \
-    -e AWS_BEARER_TOKEN_BEDROCK="$AWS_BEARER_TOKEN_BEDROCK" \
-    -e AZURE_OPENAI_API_KEY="$AZURE_OPENAI_API_KEY" \
-    -e AZURE_COGNITIVE_SERVICES_RESOURCE_NAME="$AZURE_COGNITIVE_SERVICES_RESOURCE_NAME" \
-    devcontainer-cli "$@"
-}
-```
+Add `scripts/devcontainer-aliases.zsh` to a shell dot file, or use the install
+script described below.
 
 
 ## Rebuild the devcontainer
@@ -116,98 +97,7 @@ docker run --rm -it \
 ```
 
 
-```shell
-coding-agent() {
-  # 取得目前目錄的名稱 (例如 /Users/user/project-abc 會得到 project-abc)
-  local dir_name="${PWD:t}"
-  local networks=()
-  local workspace_volumes=()
-  local docker_run_args=(docker run --rm -dit)
-
-  while (( $# > 0 )); do
-    case "$1" in
-      --network)
-        if (( $# < 2 )) || [[ -z "$2" ]]; then
-          print -u2 "coding-agent: --network requires a network name"
-          return 2
-        fi
-        networks+=("$2")
-        shift 2
-        ;;
-      --workspace-volume)
-        if (( $# < 2 )) || [[ -z "$2" ]]; then
-          print -u2 "coding-agent: --workspace-volume requires a directory path"
-          return 2
-        fi
-
-        local host_path="${2:A}"
-        local workspace_name="${host_path:t}"
-        if [[ -z "$workspace_name" ]]; then
-          print -u2 "coding-agent: --workspace-volume path must name a directory"
-          return 2
-        fi
-
-        # Docker destinations must be unique when multiple paths share a name.
-        local existing_volume
-        for existing_volume in "${workspace_volumes[@]}"; do
-          if [[ "${existing_volume##*|}" == "$workspace_name" ]]; then
-            print -u2 "coding-agent: duplicate workspace directory name: $workspace_name"
-            return 2
-          fi
-        done
-        workspace_volumes+=("$host_path|$workspace_name")
-        shift 2
-        ;;
-      *)
-        print -u2 "coding-agent: unknown option: $1"
-        return 2
-        ;;
-    esac
-  done
-
-  # 第一個 network 在建立容器時加入，其餘 network 在容器啟動後加入。
-  if (( ${#networks} > 0 )); then
-    docker_run_args+=(--network "${networks[1]}")
-  fi
-
-  local workspace_mounts=()
-  local workspace_volume
-  for workspace_volume in "${workspace_volumes[@]}"; do
-    local host_path="${workspace_volume%%|*}"
-    local workspace_name="${workspace_volume##*|}"
-    workspace_mounts+=(--mount "type=bind,source=$host_path,target=/workspaces/$workspace_name,readonly")
-  done
-
-  "${docker_run_args[@]}" \
-    --security-opt=seccomp=unconfined \
-    --name="$dir_name" \
-    -v vscocde-golang-devcontainer:/root/go \
-    -v opencode_setting:/root/.local \
-    -v claude_setting:/root/.claude_setting \
-    -v codex_setting:/root/.codex \
-    -v "$PWD":/workspaces/"$dir_name" \
-    "${workspace_mounts[@]}" \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -w /workspaces/"$dir_name" \
-    -e WORKSPACE_FOLDER=/workspaces/"$dir_name" \
-    -e AWS_BEARER_TOKEN_BEDROCK \
-    -e AZURE_OPENAI_API_KEY \
-    -e AZURE_COGNITIVE_SERVICES_RESOURCE_NAME \
-    codeing-agent-devcontainer:standalone || return
-
-  if (( ${#networks} > 1 )); then
-    local network
-    for network in "${networks[2,-1]}"; do
-      docker network connect "$network" "$dir_name" || {
-        docker rm -f "$dir_name" >/dev/null
-        return 1
-      }
-    done
-  fi
-
-  docker attach "$dir_name"
-}
-```
+The `coding-agent()` implementation is maintained in `scripts/coding-agent.zsh`.
 
 不帶 `--network` 時使用 Docker 的預設 network。可重複指定 `--network` 來連接
 多個 container network：
@@ -226,3 +116,19 @@ coding-agent --workspace-volume ../shared-lib \
 ```
 
 上例會分別掛載到 `/workspaces/shared-lib` 和 `/workspaces/another-project`。
+
+### Install or update `coding-agent()`
+
+Use the repository script to install the function into zsh. Running it again
+updates the managed block instead of adding a duplicate:
+
+```shell
+./scripts/install-coding-agent.sh
+source ~/.zshrc
+```
+
+To use another zsh configuration file:
+
+```shell
+./scripts/install-coding-agent.sh --file ~/.config/zsh/.zshrc
+```
