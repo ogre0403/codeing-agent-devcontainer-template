@@ -59,6 +59,11 @@ fi
   printf '%s\n' "$end_marker"
 } >> "$output_file"
 
-mv "$output_file" "$target"
+if [ -L "$target" ]; then
+  # Write through the symlink so the link itself is preserved.
+  cat "$output_file" > "$target"
+else
+  mv "$output_file" "$target"
+fi
 printf 'Installed coding-agent() in %s\n' "$target"
 printf 'Run: source %s\n' "$target"
