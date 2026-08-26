@@ -29,3 +29,10 @@ rm -rf "$tmp"
 
 # Install officecli skill
 officecli install
+
+# Install ELI5 (Explain Like I Am 5)
+#
+tmp=$(mktemp -d)
+git clone https://github.com/DreambigOu/ELI5.git "$tmp/skills"
+cp -a -- "$tmp"/skills/skills/eli5 ~/.agents/skills/
+rm -rf "$tmp"
