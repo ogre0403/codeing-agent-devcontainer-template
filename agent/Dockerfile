@@ -92,6 +92,8 @@ RUN npm install --global \
 RUN npm install -g @officecli/officecli && \
     apk add icu-libs
 
+RUN	npm install --global yarn
+
 ENV PATH="/usr/local/go/bin:/root/.opencode/bin:/root/.local/bin:${PATH}" \
 	LANG="C.UTF-8" \
 	LANGUAGE="C.UTF-8" \

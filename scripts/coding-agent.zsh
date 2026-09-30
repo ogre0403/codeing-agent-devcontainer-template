@@ -8,6 +8,7 @@ coding-agent() {
   local networks=()
   local workspace_volumes=()
   local docker_run_args=(docker run --rm -dit)
+  local host_network=false
 
   while (( $# > 0 )); do
     case "$1" in
@@ -16,8 +17,20 @@ coding-agent() {
           print -u2 "coding-agent: --network requires a network name"
           return 2
         fi
+        if [[ "$host_network" == true ]]; then
+          print -u2 "coding-agent: --host-network and --network are mutually exclusive"
+          return 2
+        fi
         networks+=("$2")
         shift 2
+        ;;
+      --host-network)
+        if (( ${#networks} > 0 )); then
+          print -u2 "coding-agent: --host-network and --network are mutually exclusive"
+          return 2
+        fi
+        host_network=true
+        shift
         ;;
       --workspace-volume)
         if (( $# < 2 )) || [[ -z "$2" ]]; then
@@ -49,7 +62,9 @@ coding-agent() {
     esac
   done
 
-  if (( ${#networks} > 0 )); then
+  if [[ "$host_network" == true ]]; then
+    docker_run_args+=(--network host)
+  elif (( ${#networks} > 0 )); then
     docker_run_args+=(--network "${networks[1]}")
   fi
 
