@@ -21,6 +21,7 @@ RUN apk add --no-cache \
 		ripgrep \
 		tmux \
 		tzdata \
+		procps \ 
 		zsh-vcs && \
 	sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.1/zsh-in-docker.sh)" -- \
 	-t agnoster \
