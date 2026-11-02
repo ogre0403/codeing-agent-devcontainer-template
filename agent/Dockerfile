@@ -21,7 +21,9 @@ RUN apk add --no-cache \
 		ripgrep \
 		tmux \
 		tzdata \
-		procps \ 
+		procps \
+		chromium \
+		font-noto-cjk \
 		zsh-vcs && \
 	sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.1/zsh-in-docker.sh)" -- \
 	-t agnoster \
@@ -42,6 +44,8 @@ RUN apk add --no-cache \
 	-p https://github.com/zsh-users/zsh-completions
 
 ENV TZ="Asia/Taipei"
+
+ENV DISPLAY="host.docker.internal:0"
 
 RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime && \
 	echo ${TZ} > /etc/timezone
